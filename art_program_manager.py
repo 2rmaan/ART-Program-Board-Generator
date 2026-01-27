@@ -3,15 +3,13 @@ import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import os
 
-# ===========================
-# 🎨 EXECUTIVE STYLE CONFIG
-# ===========================
+
 COLORS = {
     'Feature': '#AED6F1',      # Blue
     'Dependency': '#E74C3C',   # Red
     'Milestone': '#F39C12',    # Orange
     'Line': '#C0392B',         # String
-    'IP_Fill': '#FADBD8'       # Light Red for IP Column
+    'IP_Fill': '#FADBD8'       # Light Red
 }
 
 ITERATIONS = ['Iteration 1.1', 'Iteration 1.2', 'Iteration 1.3', 'Iteration 1.4', 'Iteration 1.5 (IP)', 'PI 2 >>>']
@@ -29,31 +27,29 @@ def generate_fixed_art_board(csv_path):
     ax.set_xlim(-0.5, len(ITERATIONS) - 0.5)
     ax.set_ylim(-0.5, len(TEAMS) - 0.5)
     
-    # 1. Background Grid
+    # Background Grid
     for i in range(len(ITERATIONS) + 1): ax.axvline(i - 0.5, color='#BDC3C7', lw=0.8, ls='--')
     for j in range(len(TEAMS) + 1): ax.axhline(j - 0.5, color='#BDC3C7', lw=0.8)
 
-    # 2. IP Iteration Blackout
+    # IP Iteration Blackout
     ip_idx = ITERATIONS.index('Iteration 1.5 (IP)')
     ax.add_patch(patches.Rectangle((ip_idx - 0.5, -0.5), 1, len(TEAMS), color=COLORS['IP_Fill'], alpha=0.25))
     ax.text(ip_idx, 0.4, "IP ITERATION: NO FEATURE WORK", ha='center', fontweight='bold', color='#A93226', fontsize=10)
 
     pos_map = {}
     id_to_type = {}
-    cell_occupancy = {} # Tracker to prevent the overlap you saw
+    cell_occupancy = {} 
 
-    # 3. Card Rendering with Auto-Stacking
+    # Card Rendering
     for _, row in df.iterrows():
         it_key = row['Iteration']
         x = ITERATIONS.index(it_key)
         y = TEAMS.index('Milestones & Events') if row['Type'] in ['Milestone', 'Event'] else TEAMS.index(row['Team'])
         
-        # Calculate vertical offset to prevent overlap (The Fix)
         count = cell_occupancy.get((x, y), 0)
-        y_offset = count * 0.18  # Adjust this value if you need more/less spacing
+        y_offset = count * 0.18  
         cell_occupancy[(x, y)] = count + 1
 
-        # Color Logic
         is_source = df['Dependency_ID'].str.contains(row['ID'], na=False).any()
         if row['Type'] in ['Milestone', 'Event']:
             color, c_type = COLORS['Milestone'], 'ORANGE'
@@ -62,7 +58,6 @@ def generate_fixed_art_board(csv_path):
         else:
             color, c_type = COLORS['Feature'], 'BLUE'
 
-        # Render Card with the new offset
         rect = patches.FancyBboxPatch((x - 0.38, y - 0.28 + y_offset), 0.76, 0.50, 
                                       boxstyle="round,pad=0.02", lw=1.5, 
                                       edgecolor='#283747', facecolor=color)
@@ -73,7 +68,7 @@ def generate_fixed_art_board(csv_path):
         pos_map[row['ID']] = (x, y + y_offset)
         id_to_type[row['ID']] = c_type
 
-    # 4. Corrected Dependency Flow
+ 
     for _, row in df.iterrows():
         if pd.notna(row['Dependency_ID']):
             src, tgt = row['Dependency_ID'], row['ID']
@@ -83,7 +78,7 @@ def generate_fixed_art_board(csv_path):
                                 arrowprops=dict(arrowstyle="->", color=COLORS['Line'],
                                                 connectionstyle="arc3,rad=.2", lw=2, alpha=0.5))
 
-    # Axis Labels
+
     ax.set_xticks(range(len(ITERATIONS)))
     ax.set_xticklabels(ITERATIONS, fontsize=12, fontweight='bold')
     ax.set_yticks(range(len(TEAMS)))
@@ -96,8 +91,7 @@ def generate_fixed_art_board(csv_path):
     os.makedirs("output_visuals", exist_ok=True)
     save_path = "output_visuals/art_board_fixed_stacking.png"
     plt.savefig(save_path, dpi=300, bbox_inches='tight')
-    print(f"🚀 Fixed board generated: {save_path}")
+    print(f"Fixed board generated: {save_path}")
 
 if __name__ == "__main__":
-    # Uses the 'art_program_board_final_v4.csv' you confirmed
     generate_fixed_art_board('art_program_board_final_v4.csv')
