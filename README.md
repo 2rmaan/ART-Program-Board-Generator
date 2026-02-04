@@ -10,7 +10,7 @@ By enforcing SAFe governance rules—such as the **Innovation and Planning (IP) 
 ## Strategic Delivery Dashboard
 *Visualization of inter-team dependency strings and value-stream milestones.*
 
-![ART Program Board](output_visuals/final_delivery_board.png)
+![ART Program Board](output_visuals/art_board_fixed_stacking.png)
 
 ---
 
