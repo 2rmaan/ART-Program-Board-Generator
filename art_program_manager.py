@@ -8,8 +8,8 @@ COLORS = {
     'Feature': '#AED6F1',      # Blue
     'Dependency': '#E74C3C',   # Red
     'Milestone': '#F39C12',    # Orange
-    'Line': '#C0392B',         # String
-    'IP_Fill': '#FADBD8'       # Light Red
+    'Line': '#C0392B',         
+    'IP_Fill': '#FADBD8'       
 }
 
 ITERATIONS = ['Iteration 1.1', 'Iteration 1.2', 'Iteration 1.3', 'Iteration 1.4', 'Iteration 1.5 (IP)', 'PI 2 >>>']
@@ -31,7 +31,7 @@ def generate_fixed_art_board(csv_path):
     for i in range(len(ITERATIONS) + 1): ax.axvline(i - 0.5, color='#BDC3C7', lw=0.8, ls='--')
     for j in range(len(TEAMS) + 1): ax.axhline(j - 0.5, color='#BDC3C7', lw=0.8)
 
-    # IP Iteration Blackout
+    
     ip_idx = ITERATIONS.index('Iteration 1.5 (IP)')
     ax.add_patch(patches.Rectangle((ip_idx - 0.5, -0.5), 1, len(TEAMS), color=COLORS['IP_Fill'], alpha=0.25))
     ax.text(ip_idx, 0.4, "IP ITERATION: NO FEATURE WORK", ha='center', fontweight='bold', color='#A93226', fontsize=10)
